@@ -228,7 +228,7 @@ python main.py --input-dir "D:\Images" --debug-ocr
 - BMP (`.bmp`)
 - WebP (`.webp`)
 
-## 📊 로그
+##   로그
 
 처리 진행 상황은 다음 위치에 기록됩니다:
 - **콘솔**: 실시간 진행 상황
@@ -239,7 +239,7 @@ python main.py --input-dir "D:\Images" --debug-ocr
 - 30일 이상 된 로그는 자동 삭제
 - 오래된 로그는 자동 압축
 
-## ⚠️ 주의사항
+##   주의사항
 
 1. **사전 준비 (중요!)**
    - Topaz Gigapixel AI를 먼저 실행하고 설정을 완료하세요
@@ -249,7 +249,7 @@ python main.py --input-dir "D:\Images" --debug-ocr
      - File Naming: 파일명 패턴 (예: `{filename}_upscaled`)
 
 2. **처리 중에는**
-   - ⚠️ 마우스/키보드를 사용하지 마세요 (자동화 방해)
+   -   마우스/키보드를 사용하지 마세요 (자동화 방해)
    - 긴급 중단: 마우스를 화면 왼쪽 위 모서리로 이동 (FailSafe)
    - 처리 중인 이미지가 화면에 표시됩니다
 

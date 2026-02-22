@@ -226,7 +226,7 @@ class IconDetector:
                     found = True
         
         if found:
-            logger.info(f"✓ Multiscale match: confidence={best_confidence:.3f}, scale={best_scale}")
+            logger.info(f"  Multiscale match: confidence={best_confidence:.3f}, scale={best_scale}")
         else:
             logger.warning(f"✗ No match found. Best confidence: {best_confidence:.3f} at scale {best_scale}")
         
@@ -356,7 +356,7 @@ def wait_for_icon_appear(
             fallback_attempted = True
             hwnd = WindowManager.find_window_by_title(target_title)
             if hwnd != 0:
-                logger.info(f"✓ Fallback window found: '{target_title}'")
+                logger.info(f"  Fallback window found: '{target_title}'")
         
         if hwnd == 0:
             if check_count == 1:
@@ -401,7 +401,7 @@ def wait_for_icon_appear(
         )
         
         if found:
-            logger.info(f"✓ Icon '{icon_name}' detected! (confidence: {confidence:.3f})")
+            logger.info(f"  Icon '{icon_name}' detected! (confidence: {confidence:.3f})")
             return True
         
         # 상태 로깅

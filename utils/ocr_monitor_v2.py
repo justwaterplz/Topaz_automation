@@ -163,7 +163,7 @@ def detect_text_tesseract(
             logger.debug(f"Tesseract detected: {detected_texts}")
         
         if found:
-            logger.info(f"✓ Tesseract found '{target_text}' in: {full_text}")
+            logger.info(f"  Tesseract found '{target_text}' in: {full_text}")
         
         return found, full_text
     
@@ -201,7 +201,7 @@ def detect_text_easyocr(
             logger.debug(f"EasyOCR detected: {results}")
         
         if found:
-            logger.info(f"✓ EasyOCR found '{target_text}' in: {full_text}")
+            logger.info(f"  EasyOCR found '{target_text}' in: {full_text}")
         
         return found, full_text
     
@@ -250,7 +250,7 @@ def detect_text_template_matching(
         found = max_val >= threshold
         
         if found:
-            logger.info(f"✓ Template '{template_name}' matched (confidence: {max_val:.2f})")
+            logger.info(f"  Template '{template_name}' matched (confidence: {max_val:.2f})")
         else:
             logger.debug(f"Template '{template_name}' not matched (max: {max_val:.2f})")
         
@@ -391,11 +391,11 @@ def wait_for_save_processing_complete(
         
         # 상태 업데이트
         if processing_found and not processing_detected:
-            logger.info("✓ 'Processing' detected - save started")
+            logger.info("  'Processing' detected - save started")
             processing_detected = True
         
         if done_found:
-            logger.info("✓ 'Done' detected - save completed!")
+            logger.info("  'Done' detected - save completed!")
             return True
         
         # Processing 감지 후 사라지면 완료
@@ -406,12 +406,12 @@ def wait_for_save_processing_complete(
             # 재확인
             done_found_2, _ = detect_text_in_region(x, y, width, height, "Done")
             if done_found_2:
-                logger.info("✓ 'Done' confirmed - save complete")
+                logger.info("  'Done' confirmed - save complete")
                 return True
             
             processing_found_2, _ = detect_text_in_region(x, y, width, height, "Processing")
             if not processing_found_2:
-                logger.info("✓ Processing complete (text disappeared)")
+                logger.info("  Processing complete (text disappeared)")
                 return True
         
         # 상태 로깅

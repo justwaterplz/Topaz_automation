@@ -10,7 +10,6 @@ from utils.state_monitor import StateMonitor
 
 
 class GigapixelController(BaseController):
-    """Topaz Gigapixel AI 제어 클래스"""
     
     def __init__(self):
         super().__init__(GigapixelConfig)
@@ -18,15 +17,7 @@ class GigapixelController(BaseController):
         logger.info("GigapixelController initialized")
     
     def open_image(self, image_path: Path) -> bool:
-        """
-        이미지 열기
         
-        Args:
-            image_path: 열 이미지 파일 경로
-        
-        Returns:
-            성공 여부
-        """
         if not image_path.exists():
             logger.error(f"Image file not found: {image_path}")
             return False
@@ -70,10 +61,10 @@ class GigapixelController(BaseController):
         # 이미지 로드 완료 확인 (타이틀바에 파일명 표시됨)
         logger.debug(f"Waiting for image to load...")
         if self.state_monitor.verify_image_loaded(image_path.name, timeout=15):
-            logger.info(f"✓ Image loaded: {image_path.name}")
+            logger.info(f"Image loaded: {image_path.name}")
             return True
         else:
-            logger.warning(f"⚠ Image load verification timeout (continuing anyway)")
+            logger.warning(f"Image load verification timeout (continuing anyway)")
             time.sleep(1)  # 추가 대기
             return True  # 타임아웃이어도 계속 진행
     
@@ -156,8 +147,7 @@ class GigapixelController(BaseController):
         
         # ===== 저장 처리 대기 (고정 시간) =====
         logger.info("=" * 60)
-        logger.info("⏳ Waiting for save processing to complete...")
-        logger.info("   (Using fixed wait time - reliable and simple)")
+        logger.info("Waiting for save processing to complete...")
         logger.info("=" * 60)
         
         # 고정 시간 대기 (config에서 설정)
@@ -170,7 +160,7 @@ class GigapixelController(BaseController):
                 logger.info(f"  Processing... ({remaining}s remaining)")
             time.sleep(1)
         
-        logger.info("✓ Save wait complete")
+        logger.info("Save wait complete")
         logger.info("=" * 60)
         
         # Export Settings 창 닫기
@@ -189,10 +179,10 @@ class GigapixelController(BaseController):
         logger.debug(f"Current window: {current_title}")
         
         if "Topaz Gigapixel" in current_title:
-            logger.info("✓ Image saved and dialog closed")
+            logger.info("Image saved and dialog closed")
             return True
         else:
-            logger.warning(f"⚠ Dialog may not be closed (title: {current_title})")
+            logger.warning(f"Dialog may not be closed (title: {current_title})")
             # 추가 Esc 시도
             pyautogui.press('esc')
             time.sleep(1)
@@ -208,20 +198,11 @@ class GigapixelController(BaseController):
         wait_time = self.config.PROCESSING_WAIT_TIME
         logger.info(f"Waiting {wait_time}s for processing to complete...")
         time.sleep(wait_time)
-        logger.info(f"✓ Processing wait complete")
+        logger.info(f"Processing wait complete")
         return True
     
     def process_single_image(self, input_path: Path, output_path: Path) -> bool:
-        """
-        단일 이미지 처리 (열기 -> 대기 -> 저장)
         
-        Args:
-            input_path: 입력 이미지 경로
-            output_path: 출력 이미지 경로
-        
-        Returns:
-            성공 여부
-        """
         logger.info(f"Processing image: {input_path.name}")
         
         # 1. 이미지 열기
@@ -324,7 +305,7 @@ class GigapixelController(BaseController):
             성공 여부
         """
         logger.info("="*60)
-        logger.info(f"▶ STARTING: {input_path.name}")
+        logger.info(f"STARTING: {input_path.name}")
         logger.info("="*60)
         
         # 1. 이미지 열기 (절대 경로 사용)
@@ -332,31 +313,31 @@ class GigapixelController(BaseController):
         if not self.open_image(input_path):
             logger.error("Failed to open image")
             return False
-        logger.info("✓ Image opened")
+        logger.info("Image opened")
         
         # 2. Zoom to fit (전체 이미지 화면에 맞춤)
         logger.info("Step 2: Zoom to fit...")
         time.sleep(1.5)  # 이미지가 완전히 로드될 때까지 대기
         self.zoom_to_fit()
         time.sleep(1)  # Zoom 적용 대기
-        logger.info("✓ Zoom applied")
+        logger.info("Zoom applied")
         
         # 3. 처리 대기 (고정 시간 - 업스케일은 저장 시 처리됨)
         logger.info("Step 3: Waiting for initial processing...")
         if not self.wait_for_processing():
             logger.warning("Processing wait returned False")
             return False
-        logger.info("✓ Initial processing complete")
+        logger.info("Initial processing complete")
         
         # 4. 이미지 자동 저장 (고정 시간 대기)
         logger.info("Step 4: Saving image...")
         if not self.save_image_auto():
             logger.error("Failed to save image")
             return False
-        logger.info("✓ Save complete")
+        logger.info("  Save complete")
         
         logger.info("="*60)
-        logger.info(f"✓ COMPLETED: {input_path.name}")
+        logger.info(f"  COMPLETED: {input_path.name}")
         logger.info("="*60)
         logger.info("")  # 빈 줄
         
@@ -404,7 +385,7 @@ class GigapixelController(BaseController):
             
             # 이미지 처리
             try:
-                logger.info(f"🔄 Starting processing of image #{idx}: {input_path.name}")
+                logger.info(f"  Starting processing of image #{idx}: {input_path.name}")
                 
                 import time as time_module
                 start_time = time_module.time()
@@ -416,7 +397,7 @@ class GigapixelController(BaseController):
                 if success:
                     results['success'] += 1
                     logger.info(f"")
-                    logger.info(f"✅ IMAGE #{idx} SUCCESS (took {duration:.1f}s)")
+                    logger.info(f"  IMAGE #{idx} SUCCESS (took {duration:.1f}s)")
                     logger.info(f"   Total progress: {results['success']}/{len(image_files)}")
                     logger.info(f"")
                     
@@ -430,7 +411,7 @@ class GigapixelController(BaseController):
                 else:
                     results['failed'] += 1
                     logger.error(f"")
-                    logger.error(f"❌ IMAGE #{idx} FAILED (took {duration:.1f}s)")
+                    logger.error(f"IMAGE #{idx} FAILED (took {duration:.1f}s)")
                     logger.error(f"   Total failed: {results['failed']}")
                     logger.error(f"")
                     
@@ -444,7 +425,7 @@ class GigapixelController(BaseController):
                         )
             except Exception as e:
                 logger.error(f"")
-                logger.error(f"❌ IMAGE #{idx} ERROR: {e}")
+                logger.error(f"IMAGE #{idx} ERROR: {e}")
                 logger.exception("Full traceback:")
                 results['failed'] += 1
                 logger.error(f"")

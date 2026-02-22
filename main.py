@@ -15,7 +15,9 @@ from pathlib import Path
 from loguru import logger
 
 from config.gigapixel_config import GigapixelConfig
+from config.photoai_config import PhotoAIConfig
 from controllers.gigapixel_controller import GigapixelController
+from controllers.photoai_controller import PhotoAIController
 from utils.logger import setup_logger
 from utils.run_history import RunHistory
 
@@ -31,9 +33,9 @@ def main():
     parser.add_argument(
         '--mode', 
         type=str, 
-        choices=['upscale', 'vectorize'], 
+        choices=['upscale', 'photoai'], 
         default='upscale',
-        help='처리 모드: upscale (Gigapixel AI) 또는 vectorize (Photo AI) [기본값: upscale]'
+        help='처리 모드: upscale (Gigapixel AI) 또는 photoai (Photo AI) [기본값: upscale]'
     )
     parser.add_argument(
         '--single',
@@ -54,7 +56,17 @@ def main():
     parser.add_argument(
         '--save-wait-time',
         type=int,
-        help='저장 처리 대기 시간(초) - 기본값은 18초'
+        help='저장 처리 대기 시간(초) - 기본값은 18초 (Gigapixel AI 전용)'
+    )
+    parser.add_argument(
+        '--filter-wait-time',
+        type=int,
+        help='필터 적용 대기 시간(초) - 기본값은 15초 (Photo AI 전용)'
+    )
+    parser.add_argument(
+        '--export-wait-time',
+        type=int,
+        help='이미지당 export 대기 시간(초) - 기본값은 10초 (Photo AI 전용)'
     )
     
     args = parser.parse_args()
@@ -63,14 +75,17 @@ def main():
     if args.mode == 'upscale':
         config = GigapixelConfig
         setup_logger(config.LOG_DIR, config.LOG_LEVEL, 'gigapixel')
+    elif args.mode == 'photoai':
+        config = PhotoAIConfig
+        setup_logger(config.LOG_DIR, config.LOG_LEVEL, 'photoai')
     else:
-        logger.error("vectorize mode is not implemented yet")
+        logger.error(f"Unknown mode: {args.mode}")
         return 1
     
     logger.info("=" * 60)
     logger.info(f"Topaz Automation Started - Mode: {args.mode}")
     logger.info("=" * 60)
-    logger.info("⚠️  Topaz 앱이 실행 중이고 원하는 설정이 적용되어 있는지 확인하세요!")
+    logger.info("Topaz 앱이 실행 중이고 원하는 설정이 적용되어 있는지 확인하세요!")
     logger.info("")
     
     try:
@@ -98,11 +113,11 @@ def main():
             # 앱 윈도우 확인 (자동 실행 안 함)
             logger.info("Topaz 앱 윈도우 확인 중...")
             if not controller.activate_app_window():
-                logger.error("❌ Topaz 앱을 찾을 수 없습니다.")
-                logger.error("   → Topaz Gigapixel AI를 먼저 실행해주세요.")
+                logger.error("Topaz 앱을 찾을 수 없습니다.")
+                logger.error("Topaz Gigapixel AI를 먼저 실행해주세요.")
                 return 1
             
-            logger.info("✓ Topaz 앱이 활성화되었습니다.")
+            logger.info("Topaz 앱이 활성화되었습니다.")
             logger.info("")
             
             # 단일 파일 처리 모드
@@ -110,17 +125,17 @@ def main():
                 input_path = Path(args.single)
                 
                 if not input_path.exists():
-                    logger.error(f"❌ 파일을 찾을 수 없습니다: {input_path}")
+                    logger.error(f"파일을 찾을 수 없습니다: {input_path}")
                     return 1
                 
-                logger.info(f"📄 단일 파일 처리: {input_path.name}")
+                logger.info(f"단일 파일 처리: {input_path.name}")
                 success = controller.process_single_image_auto_save(input_path)
                 
                 if success:
-                    logger.info("✓ 처리 완료!")
+                    logger.info("처리 완료!")
                     return 0
                 else:
-                    logger.error("✗ 처리 실패")
+                    logger.error("처리 실패")
                     return 1
             
             # 배치 처리 모드
@@ -128,11 +143,10 @@ def main():
                 input_dir = Path(args.input_dir) if args.input_dir else config.INPUT_DIR
                 
                 if not input_dir.exists():
-                    logger.error(f"❌ 입력 폴더를 찾을 수 없습니다: {input_dir}")
+                    logger.error(f"입력 폴더를 찾을 수 없습니다: {input_dir}")
                     return 1
                 
-                logger.info(f"📁 배치 처리 모드: {input_dir}")
-                logger.info(f"   (이미 처리된 파일은 자동으로 제외됩니다)")
+                logger.info(f"배치 처리 모드: {input_dir}")
                 logger.info("")
                 
                 run_history.set_input_directory(str(input_dir))
@@ -147,13 +161,75 @@ def main():
                 
                 logger.info("")
                 logger.info("=" * 60)
-                logger.info(f"✓ 성공: {results['success']}/{results['total']}")
+                logger.info(f"성공: {results['success']}/{results['total']}")
                 if results['failed'] > 0:
-                    logger.warning(f"✗ 실패: {results['failed']}")
-                logger.info(f"📊 실행 기록: {history_file}")
+                    logger.warning(f"실패: {results['failed']}")
+                logger.info(f"실행 기록: {history_file}")
                 logger.info("=" * 60)
                 
                 return 0 if results['failed'] == 0 else 1
+        
+        elif args.mode == 'photoai':
+            controller = PhotoAIController()
+            
+            # 대기 시간 설정
+            if args.filter_wait_time:
+                controller.config.FILTER_APPLY_WAIT_TIME = args.filter_wait_time
+            
+            if args.export_wait_time:
+                controller.config.EXPORT_PER_IMAGE_WAIT_TIME = args.export_wait_time
+            
+            logger.info(f"필터 적용 대기 시간: {controller.config.FILTER_APPLY_WAIT_TIME}초")
+            logger.info(f"이미지당 Export 대기 시간: {controller.config.EXPORT_PER_IMAGE_WAIT_TIME}초")
+            logger.info("처리 방식: Autopilot (각 이미지 순차 처리)")
+            
+            # 실행 기록 초기화
+            run_history = RunHistory()
+            run_history.set_config({
+                "mode": args.mode,
+                "filter_wait_time": controller.config.FILTER_APPLY_WAIT_TIME,
+                "export_wait_time": controller.config.EXPORT_PER_IMAGE_WAIT_TIME
+            })
+            
+            # 앱 윈도우 확인
+            logger.info("Topaz Photo AI 앱 윈도우 확인 중...")
+            if not controller.activate_app_window():
+                logger.error("Topaz Photo AI 앱을 찾을 수 없습니다.")
+                logger.error("Topaz Photo AI를 먼저 실행해주세요.")
+                return 1
+            
+            logger.info("Topaz Photo AI 앱이 활성화되었습니다.")
+            logger.info("")
+            
+            # 배치 처리만 지원 (다중 이미지 처리)
+            input_dir = Path(args.input_dir) if args.input_dir else config.INPUT_DIR
+            
+            if not input_dir.exists():
+                logger.error(f"입력 폴더를 찾을 수 없습니다: {input_dir}")
+                return 1
+            
+            logger.info(f"배치 처리 모드: {input_dir}")
+            logger.info("")
+            
+            run_history.set_input_directory(str(input_dir))
+            
+            results = controller.process_batch(
+                input_dir,
+                run_history=run_history
+            )
+            
+            # 실행 기록 저장
+            history_file = run_history.finalize()
+            
+            logger.info("")
+            logger.info("=" * 60)
+            logger.info(f"성공: {results['success']}/{results['total']}")
+            if results['failed'] > 0:
+                logger.warning(f"실패: {results['failed']}")
+            logger.info(f"실행 기록: {history_file}")
+            logger.info("=" * 60)
+            
+            return 0 if results['failed'] == 0 else 1
         
         else:
             logger.error(f"Mode '{args.mode}' is not implemented yet")

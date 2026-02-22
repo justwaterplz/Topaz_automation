@@ -1,12 +1,4 @@
-"""
-아이콘 템플릿 캡처 도구
 
-사용법:
-1. Topaz 앱에서 Export Settings 다이얼로그를 열고 "Done" 상태로 만듭니다
-2. 이 스크립트를 실행합니다
-3. 5초 후 Queue 영역이 자동으로 캡처됩니다
-4. 저장된 이미지에서 폴더 아이콘 부분만 잘라서 done_folder_icon.png로 저장합니다
-"""
 import sys
 import time
 from pathlib import Path
@@ -53,11 +45,11 @@ def main():
         # Topaz 메인 윈도우에서 시도
         hwnd = WindowManager.find_window_by_title("Topaz Gigapixel")
         if hwnd == 0:
-            print("❌ 윈도우를 찾을 수 없습니다!")
-            print("   Topaz 앱이 실행 중이고 Export Settings 다이얼로그가 열려있는지 확인하세요.")
+            print("윈도우를 찾을 수 없습니다!")
+            print("Topaz 앱이 실행 중이고 Export Settings 다이얼로그가 열려있는지 확인하세요.")
             return 1
         
-        print("⚠️  Export Settings 다이얼로그를 찾을 수 없어 메인 윈도우를 사용합니다.")
+        print("Export Settings 다이얼로그를 찾을 수 없어 메인 윈도우를 사용합니다.")
     
     # Queue 영역 좌표 (상대)
     queue_region_ratios = {
@@ -77,7 +69,7 @@ def main():
     )
     
     if region is None:
-        print("❌ 영역 좌표를 계산할 수 없습니다!")
+        print("영역 좌표를 계산할 수 없습니다!")
         return 1
     
     x, y, width, height = region
@@ -92,7 +84,7 @@ def main():
     
     full_capture_path = output_dir / "queue_full_capture.png"
     if detector.save_template_from_region(x, y, width, height, "queue_full_capture"):
-        print(f"✓ 전체 Queue 영역 캡처 완료: {full_capture_path}")
+        print(f"  전체 Queue 영역 캡처 완료: {full_capture_path}")
     
     # 2. 폴더 아이콘 영역 캡처 (Done 오른쪽)
     # Done 텍스트는 Queue 영역의 오른쪽에 위치
@@ -103,16 +95,16 @@ def main():
     
     icon_capture_path = output_dir / "done_folder_icon_auto.png"
     if detector.save_template_from_region(icon_x, icon_y, icon_width, icon_height, "done_folder_icon_auto"):
-        print(f"✓ 폴더 아이콘 영역 캡처 완료: {icon_capture_path}")
+        print(f"  폴더 아이콘 영역 캡처 완료: {icon_capture_path}")
     
     print()
     print("=" * 60)
-    print("✅ 캡처 완료!")
+    print("  캡처 완료!")
     print("=" * 60)
     print()
-    print(f"📁 저장 위치: {output_dir}")
+    print(f"  저장 위치: {output_dir}")
     print()
-    print("📝 다음 단계:")
+    print("  다음 단계:")
     print("  1. 'queue_full_capture.png'를 열어서 확인")
     print("  2. 'done_folder_icon_auto.png'를 열어서 확인")
     print("  3. 폴더 아이콘이 명확하게 보이는지 확인")

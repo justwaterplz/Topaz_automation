@@ -97,7 +97,7 @@ class RunHistory:
         with open(filepath, 'w', encoding='utf-8') as f:
             json.dump(self.run_data, f, indent=2, ensure_ascii=False)
         
-        logger.info(f"📊 Run history saved: {filepath}")
+        logger.info(f"  Run history saved: {filepath}")
         
         return filepath
     

@@ -156,7 +156,7 @@ def main():
     temp_dir.mkdir(parents=True, exist_ok=True)
     temp_path = temp_dir / "fullscreen_capture.png"
     cv2.imwrite(str(temp_path), cv2.cvtColor(screenshot, cv2.COLOR_RGB2BGR))
-    print(f"✓ 전체 화면 캡처: {temp_path}")
+    print(f"  전체 화면 캡처: {temp_path}")
     
     # 사용자가 영역 선택
     print()
@@ -166,7 +166,7 @@ def main():
     region = select_region_interactive(screenshot)
     
     if region is None:
-        print("\n❌ 취소되었습니다.")
+        print("\n취소되었습니다.")
         return 1
     
     x, y, w, h = region
@@ -180,7 +180,7 @@ def main():
         h = abs(h)
     
     print()
-    print(f"✓ 선택된 영역: x={x}, y={y}, w={w}, h={h}")
+    print(f"  선택된 영역: x={x}, y={y}, w={w}, h={h}")
     
     # 영역 추출
     icon_image = screenshot[y:y+h, x:x+w]
@@ -194,10 +194,10 @@ def main():
     
     print()
     print("=" * 60)
-    print("✅ 템플릿 저장 완료!")
+    print("  템플릿 저장 완료!")
     print("=" * 60)
     print()
-    print(f"📁 저장 위치: {output_path}")
+    print(f"  저장 위치: {output_path}")
     print(f"📏 크기: {w} x {h} 픽셀")
     print()
     print("🎉 이제 자동화를 실행할 수 있습니다:")

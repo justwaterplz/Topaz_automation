@@ -27,10 +27,10 @@ def main():
     print("  2. 이미지 열기 (Ctrl+O)")
     print("  3. 저장하기 (Ctrl+S + Enter)")
     print("  4. Export Settings 다이얼로그 열림")
-    print("  5. Processing 완료되어 'Done' + 폴더 아이콘 보임 ✅")
+    print("  5. Processing 완료되어 'Done' + 폴더 아이콘 보임  ")
     print()
     
-    input("✅ 위 상태가 준비되었으면 Enter를 누르세요...")
+    input("  위 상태가 준비되었으면 Enter를 누르세요...")
     
     print()
     print("3초 후 전체 화면을 캡처합니다...")
@@ -54,7 +54,7 @@ def main():
     fullscreen_path = output_dir / "fullscreen_capture.png"
     cv2.imwrite(str(fullscreen_path), screenshot_cv)
     
-    print(f"✓ 전체 화면 캡처 완료: {fullscreen_path}")
+    print(f"  전체 화면 캡처 완료: {fullscreen_path}")
     print()
     
     # 화면 크기
@@ -63,13 +63,13 @@ def main():
     print()
     
     print("=" * 70)
-    print("📝 다음 단계: 폴더 아이콘을 직접 잘라주세요")
+    print("  다음 단계: 폴더 아이콘을 직접 잘라주세요")
     print("=" * 70)
     print()
     print(f"1. 이미지 편집기로 다음 파일을 여세요:")
     print(f"   {fullscreen_path.absolute()}")
     print()
-    print("2. Queue 영역에서 'Done' 옆의 📁 폴더 아이콘만 정확하게 자르세요")
+    print("2. Queue 영역에서 'Done' 옆의   폴더 아이콘만 정확하게 자르세요")
     print("   - 아이콘만 선택 (Done 텍스트 제외)")
     print("   - 크기: 약 20-40 픽셀 정도의 작은 아이콘")
     print()
@@ -84,7 +84,7 @@ def main():
     try:
         import subprocess
         subprocess.Popen(f'explorer /select,"{fullscreen_path.absolute()}"')
-        print("✓ 탐색기에서 파일을 열었습니다.")
+        print("  탐색기에서 파일을 열었습니다.")
     except:
         pass
     

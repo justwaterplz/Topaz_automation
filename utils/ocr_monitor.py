@@ -102,7 +102,7 @@ def detect_text_in_region(
         # 결과에서 target_text 찾기
         for text in results:
             if target_text.lower() in text.lower():
-                logger.info(f"✓ Found '{target_text}' in text: '{text}'")
+                logger.info(f"  Found '{target_text}' in text: '{text}'")
                 return True
         
         return False
@@ -236,7 +236,7 @@ def wait_for_text_disappear(
             
             # 연속 2번 감지 안 되면 완료로 판단
             if consecutive_not_found >= 2:
-                logger.info(f"✓ '{target_text}' disappeared (processing complete)")
+                logger.info(f"  '{target_text}' disappeared (processing complete)")
                 return True
         
         # 대기
@@ -320,12 +320,12 @@ def wait_for_save_processing_complete(
         # 상태 업데이트
         if processing_found:
             if not processing_detected:
-                logger.info("✓ 'Processing' detected - save started")
+                logger.info("  'Processing' detected - save started")
                 processing_detected = True
         
         if done_found:
             if not done_detected:
-                logger.info("✓ 'Done' detected - save completed!")
+                logger.info("  'Done' detected - save completed!")
                 done_detected = True
                 return True
         
@@ -339,7 +339,7 @@ def wait_for_save_processing_complete(
             processing_found_2 = detect_text_in_region(x, y, width, height, "Processing")
             
             if done_found_2 or not processing_found_2:
-                logger.info("✓ Save processing complete")
+                logger.info("  Save processing complete")
                 return True
         
         # 상태 로깅

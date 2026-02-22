@@ -56,7 +56,7 @@ class StateMonitor:
             title = StateMonitor.get_active_window_title()
             
             if text.lower() in title.lower():
-                logger.debug(f"✓ Found in title: '{title}'")
+                logger.debug(f"  Found in title: '{title}'")
                 return True
             
             time.sleep(check_interval)
@@ -88,7 +88,7 @@ class StateMonitor:
             title = StateMonitor.get_active_window_title()
             
             if text.lower() not in title.lower():
-                logger.debug(f"✓ Text disappeared, current title: '{title}'")
+                logger.debug(f"  Text disappeared, current title: '{title}'")
                 return True
             
             time.sleep(check_interval)
@@ -120,7 +120,7 @@ class StateMonitor:
             # 타이틀에 파일명이 포함되어 있는지 확인
             if (expected_filename.lower() in title.lower() or 
                 name_without_ext.lower() in title.lower()):
-                logger.info(f"✓ Image loaded: {expected_filename}")
+                logger.info(f"  Image loaded: {expected_filename}")
                 return True
             
             time.sleep(0.5)
@@ -153,7 +153,7 @@ class StateMonitor:
             
             # 타이틀이 변경되면 다이얼로그가 닫힌 것으로 간주
             if current_title != prev_title and "Topaz Gigapixel" in current_title:
-                logger.debug(f"✓ Dialog closed, back to: '{current_title}'")
+                logger.debug(f"  Dialog closed, back to: '{current_title}'")
                 return True
             
             prev_title = current_title
