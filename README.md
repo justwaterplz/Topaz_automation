@@ -23,11 +23,8 @@ Topaz_automation/
 │       ├── state_monitor.py
 │       └── ...
 │
-├── legacy/                    # 레거시 코드
-│   ├── photoai/              # Photo AI (사용 안 함)
-│   └── main_cli.py           # CLI 버전 (레거시)
 │
-├── main.py                    # 통합 진입점
+├── main.py                    # 앱 Entrypoint
 └── requirements.txt
 ```
 
