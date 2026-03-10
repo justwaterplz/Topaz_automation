@@ -167,6 +167,12 @@ class GigapixelController(BaseController):
         logger.info("Save wait complete")
         logger.info("=" * 60)
         
+        # 파일 디스크 쓰기 완료 대기 (마지막 파일 저장 실패 방지)
+        post_delay = getattr(self.config, 'POST_SAVE_DELAY', 3)
+        if post_delay > 0:
+            logger.debug(f"Waiting {post_delay}s for file write completion...")
+            time.sleep(post_delay)
+        
         # Export Settings 창 닫기
         logger.debug("Closing Export Settings window (Esc)...")
         time.sleep(1)

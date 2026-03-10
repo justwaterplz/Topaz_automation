@@ -51,6 +51,10 @@ class GigapixelConfig(BaseConfig):
     # 이미지 크기와 복잡도에 따라 조정 가능
     SAVE_PROCESSING_WAIT_TIME = 18  # 기본 18초 (여유있게)
     
+    # Done 감지 후 Export 창 닫기 전 추가 대기 (파일 디스크 쓰기 완료 대기)
+    # 마지막 파일 저장 실패 방지 - Topaz가 완전히 flush할 시간 필요
+    POST_SAVE_DELAY = 3  # 초
+    
     # OCR 영역 설정 (Queue 영역 - Processing/Done 감지용)
     # 방식 1: 창 기준 상대 좌표 (해상도/위치 무관) - 권장
     OCR_USE_WINDOW_RELATIVE = True
