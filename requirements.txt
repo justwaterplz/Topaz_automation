@@ -1,10 +1,11 @@
-# Core automation libraries
+PySide6>=6.5.0
+
 pyautogui==0.9.54
 pywinauto==0.6.8
 keyboard==0.13.5
 
-# Image processing (NumPy 버전 고정 - opencv 호환성)
-numpy<2.0.0
+# NumPy 2.x는 PySide6/shiboken과 호환되지 않음
+numpy>=1.24.0,<2.0.0
 opencv-python==4.8.1.78
 Pillow==10.1.0
 
@@ -12,13 +13,15 @@ Pillow==10.1.0
 pywin32==306
 psutil==5.9.8
 
-# Utilities
+# Screen capture (GPU-rendered apps)
+dxcam>=0.0.5
+
 python-dotenv==1.0.0
 loguru==0.7.2
 pyperclip==1.8.2
 
-# OCR for monitoring processing status (optional, not used with icon detection)
-# easyocr==1.7.1
-# torch==2.0.1
-# torchvision==0.15.2
+# OCR (Done/Processing detection)
+easyocr>=1.7.0
 
+# Build & Distribution (optional)
+pyinstaller>=6.3.0

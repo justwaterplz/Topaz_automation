@@ -1,6 +1,6 @@
 """OCR monitoring utilities for detecting processing status"""
 import time
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Callable
 import numpy as np
 import pyautogui
 from PIL import Image
@@ -255,7 +255,9 @@ def wait_for_save_processing_complete(
     check_interval: float = 2.0,
     timeout: int = 300,
     initial_wait: float = 2.0,
-    debug: bool = False
+    debug: bool = False,
+    region: Optional[dict] = None,
+    region_provider: Optional[Callable[[], Optional[Tuple[int, int, int, int]]]] = None
 ) -> bool:
     """
     저장 처리 완료 대기 (Queue 영역의 "Processing" -> "Done" 감지)
@@ -268,11 +270,14 @@ def wait_for_save_processing_complete(
         timeout: 최대 대기 시간 (초)
         initial_wait: 초기 대기 시간 (처리 시작 대기)
         debug: 디버그 모드 (캡처 이미지 저장)
+        region: Queue 영역 dict {'x', 'y', 'width', 'height'} (화면 절대 좌표)
+        region_provider: () -> (x,y,w,h) 콜백. 창 위치 기반 동적 영역 계산용.
+                        region보다 우선. None 반환 시 get_queue_region_coords 사용.
     
     Returns:
         성공적으로 완료되면 True
     """
-    logger.info("Waiting for save processing to complete...")
+    logger.info("Waiting for save processing to complete (OCR)...")
     logger.info("  → Looking for: 'Processing' -> 'Done' in Queue")
     
     # 초기 대기 (저장 처리가 시작되도록)
@@ -287,8 +292,24 @@ def wait_for_save_processing_complete(
         time.sleep(10)  # 10초 대기 후 계속
         return True
     
-    # Queue 영역 좌표
-    x, y, width, height = get_queue_region_coords()
+    # Queue 영역 좌표 결정 (우선순위: region_provider > region > 기본값)
+    if region_provider is not None:
+        try:
+            coords = region_provider()
+            if coords is not None:
+                x, y, width, height = coords
+                logger.debug(f"Using window-relative region: ({x}, {y}, {width}, {height})")
+            else:
+                x, y, width, height = get_queue_region_coords()
+        except Exception as e:
+            logger.warning(f"Region provider failed: {e}, using default")
+            x, y, width, height = get_queue_region_coords()
+    elif region and all(k in region for k in ('x', 'y', 'width', 'height')):
+        x, y = region['x'], region['y']
+        width, height = region['width'], region['height']
+        logger.debug(f"Using config region: ({x}, {y}, {width}, {height})")
+    else:
+        x, y, width, height = get_queue_region_coords()
     
     elapsed = initial_wait
     check_count = 0
